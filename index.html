@@ -62,6 +62,7 @@ body.live #acts{opacity:1;pointer-events:auto}
 #vcan{display:block;max-width:100%;max-height:60vh;width:auto;height:auto}
 #vcapt{color:var(--ink);font-family:'Noto Serif Bengali',serif;font-weight:600;font-size:21px;text-align:center;margin-top:12px}
 #vClose{background:var(--paper);color:var(--ink);border-radius:99px;padding:12px 30px;font-weight:600;font-size:16px}
+@media (max-height:760px){#acts{gap:6px}.act b{width:44px;height:44px}.act svg{width:21px;height:21px}.act span{font-size:11px}}
 </style>
 </head>
 <body>
@@ -75,6 +76,8 @@ body.live #acts{opacity:1;pointer-events:auto}
 <button class="act" id="bWave"><b><svg viewBox="0 0 24 24"><path d="M8 12V6.5a1.5 1.5 0 0 1 3 0V11m0-1V5a1.5 1.5 0 0 1 3 0v6m0-3a1.5 1.5 0 0 1 3 0v5.5c0 4-2.5 7-6 7-3 0-4.5-1.5-6-4l-2-3.5a1.5 1.5 0 0 1 2.4-1.7L8 14"/></svg></b><span>হাত নাড়ো</span></button>
 <button class="act" id="bDance"><b><svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg></b><span>নাচো</span></button>
 <button class="act" id="bSit"><b><svg viewBox="0 0 24 24"><path d="M4 10h16M5 10v5M19 10v5M4 15h16M7 15v4M17 15v4"/></svg></b><span>বসো</span></button>
+<button class="act" id="bKiss"><b><svg viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></b><span>চুমু</span></button>
+<button class="act" id="bAngry"><b><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 9.5l2.5 1.2M16 9.5l-2.5 1.2M8.5 16c1-1.2 2.2-1.8 3.5-1.8s2.5.6 3.5 1.8"/></svg></b><span>রাগ</span></button>
 <button class="act" id="bChat"><b><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg></b><span>চ্যাট</span></button>
 </div>
 <div id="chat"><input id="chatIn" maxlength="80" placeholder="কিছু লিখো…" autocomplete="off"><button id="chatSend">পাঠাও</button></div>
@@ -286,12 +289,15 @@ function makeAvatar(o){
     const ft=new THREE.Mesh(new THREE.BoxGeometry(.13,.08,.26),shoe);ft.position.set(0,-.46,.05);kp.add(ft);
     legs.push({hip:hp,knee:kp});
   }
-  const arms=[];
+  const arms=[],elbows=[],cheeks=[],brows=[];
   for(const s of [1,-1]){
     const p=new THREE.Group();p.position.set(.27*s,1.5,0);p.rotation.z=.1*s;body.add(p);
-    const up=new THREE.Mesh(new THREE.CylinderGeometry(.06,.055,.52,10),arm);up.position.y=-.26;p.add(up);
-    const hd=new THREE.Mesh(new THREE.SphereGeometry(.065,10,8),skin);hd.position.y=-.56;p.add(hd);
-    arms.push(p);
+    const up=new THREE.Mesh(new THREE.CylinderGeometry(.06,.057,.28,10),arm);up.position.y=-.14;p.add(up);
+    const el=new THREE.Group();el.position.y=-.28;p.add(el);
+    el.add(new THREE.Mesh(new THREE.SphereGeometry(.058,8,6),arm));
+    const fa=new THREE.Mesh(new THREE.CylinderGeometry(.057,.055,.26,10),arm);fa.position.y=-.13;el.add(fa);
+    const hd=new THREE.Mesh(new THREE.SphereGeometry(.065,10,8),skin);hd.position.y=-.28;el.add(hd);
+    arms.push(p);elbows.push(el);
   }
   const head=new THREE.Group();head.position.y=1.76;body.add(head);
   const neck=new THREE.Mesh(new THREE.CylinderGeometry(.06,.07,.14,8),skin);neck.position.y=-.17;head.add(neck);
@@ -305,14 +311,17 @@ function makeAvatar(o){
   }
   for(const s of [1,-1]){
     const e=new THREE.Mesh(new THREE.SphereGeometry(.022,8,6),B(0x201b1b));e.position.set(.07*s,.02,.178);head.add(e);
-    const ch=new THREE.Mesh(new THREE.SphereGeometry(.032,8,6),new THREE.MeshBasicMaterial({color:0xf0a3a0,transparent:true,opacity:.55}));ch.scale.z=.3;ch.position.set(.115*s,-.04,.158);head.add(ch);
+    const cm=new THREE.MeshBasicMaterial({color:0xf0a3a0,transparent:true,opacity:.55});
+    const ch=new THREE.Mesh(new THREE.SphereGeometry(.032,8,6),cm);ch.scale.z=.3;ch.position.set(.115*s,-.04,.158);head.add(ch);cheeks.push({m:cm,mesh:ch});
+    const br=new THREE.Mesh(new THREE.BoxGeometry(.075,.014,.012),B(0x1a1311));br.position.set(.07*s,.078,.187);br.rotation.z=.5*s;br.visible=false;head.add(br);brows.push(br);
   }
   const mo=new THREE.Mesh(new THREE.BoxGeometry(.05,.012,.01),B(0x8a3b3b));mo.position.set(0,-.075,.186);head.add(mo);
   const sh=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({map:shadowTex,transparent:true,depthWrite:false}));
   sh.rotation.x=-Math.PI/2;sh.position.y=.015;root.add(sh);
   scene.add(root);
-  return {root,body,head,legs,arms,pos:root.position,heading:0,targetHeading:0,phase:0,speed:0,
-    moving:false,dancing:false,sitting:false,waveT:0,goal:null,tag:null,skirt};
+  return {root,body,head,legs,arms,elbows,cheeks,brows,pos:root.position,heading:0,targetHeading:0,phase:0,speed:0,
+    moving:false,dancing:false,sitting:false,waveT:0,goal:null,tag:null,skirt,
+    angry:false,kiss:false,uthbos:false,uPhase:0,blush:0,headYaw:0};
 }
 function makeTag(av,name,you){
   const el=document.createElement('div');el.className='tag'+(you?' you':'');
@@ -343,9 +352,14 @@ makeTag(player,TO,true);makeTag(partner,FROM,false);
 /* animation */
 function animateAvatar(av,dt,time){
   const k=1-Math.exp(-14*dt),l=(a,b)=>a+(b-a)*k;
-  let lh=[0,0],lk=[0,0],az=[.1,-.1],ax=[0,0],by=0,bz=0,hx=0,hz=0;
+  let lh=[0,0],lk=[0,0],az=[.1,-.1],ax=[0,0],ay=[0,0],ex=[0,0],by=0,bz=0,bx=0,hx=0,hz=0,hy=av.headYaw;
   if(av.sitting){
     lh=[-1.5,-1.5];lk=[1.5,1.5];ax=[-.6,-.6];by=-.4;hx=.04;
+  }else if(av.uthbos){
+    av.uPhase+=dt*5.4;
+    const d=(1-Math.cos(av.uPhase))/2;
+    lh=[-1.05*d,-1.05*d];lk=[1.8*d,1.8*d];by=-.36*d;bx=.12*d;hx=-.1*d;
+    ax=[-1.812,-2.045];ay=[-.281,.525];az=[-.967,.907];ex=[-.878,-1.256];
   }else if(av.moving){
     av.phase+=dt*(4.5+av.speed*2);
     const s=Math.sin(av.phase),c=Math.cos(av.phase);
@@ -360,15 +374,24 @@ function animateAvatar(av,dt,time){
     by=Math.sin(time*2)*.006;
     az=[.1+Math.sin(time*1.5)*.02,-.1-Math.sin(time*1.5)*.02];hx=Math.sin(time*.7)*.03;
     if(av.waveT>0){av.waveT-=dt;az[0]=2.5+Math.sin(time*11)*.3}
+    if(av.angry){
+      ax=[1.048,1.048];ay=[-.868,.868];az=[.993,-.993];ex=[-1.254,-1.254];
+      const st=Math.max(0,Math.sin(time*6));lh[1]=-st*.45;lk[1]=st*.5;hz=Math.sin(time*5)*.08;
+    }
+    if(av.kiss){bx=.13;hx=.08}
   }
   for(let i=0;i<2;i++){
     const lg=av.legs[i],a=av.arms[i];
     lg.hip.rotation.x=l(lg.hip.rotation.x,lh[i]);lg.knee.rotation.x=l(lg.knee.rotation.x,lk[i]);
-    a.rotation.z=l(a.rotation.z,az[i]);a.rotation.x=l(a.rotation.x,ax[i]);
+    a.rotation.z=l(a.rotation.z,az[i]);a.rotation.x=l(a.rotation.x,ax[i]);a.rotation.y=l(a.rotation.y,ay[i]);
+    av.elbows[i].rotation.x=l(av.elbows[i].rotation.x,ex[i]);
   }
   av.skirt.rotation.x=l(av.skirt.rotation.x,av.sitting?-1.15:0);
-  av.body.position.y=l(av.body.position.y,by);av.body.rotation.z=l(av.body.rotation.z,bz);
-  av.head.rotation.x=l(av.head.rotation.x,hx);av.head.rotation.z=l(av.head.rotation.z,hz);
+  av.body.position.y=l(av.body.position.y,by);av.body.rotation.z=l(av.body.rotation.z,bz);av.body.rotation.x=l(av.body.rotation.x,bx);
+  av.head.rotation.x=l(av.head.rotation.x,hx);av.head.rotation.z=l(av.head.rotation.z,hz);av.head.rotation.y=l(av.head.rotation.y,hy);
+  av.blush=Math.max(0,av.blush-dt*.22);
+  for(const c of av.cheeks){c.m.opacity=.55+.4*av.blush;const q=1+.6*av.blush;c.mesh.scale.set(q,q,.3)}
+  for(const br of av.brows)br.visible=av.angry;
 }
 
 /* ---------- world rules ---------- */
@@ -482,6 +505,8 @@ $('#chatSend').onclick=sendChat;
 chatIn.addEventListener('keydown',e=>{if(e.key==='Enter')sendChat()});
 function reply(txt){
   const t=txt.toLowerCase();let r,act=null;
+  if(/রাগ|angry/.test(t)){setTimeout(startAngry,500);return}
+  if(/চুমু|kiss|😘/.test(t)){setTimeout(startKiss,500);return}
   if(/ভালোবাস|ভালবাস|love|❤/.test(t))r=pick(['আমিও তোমাকে অনেক ভালোবাসি ❤','এই কথাটা শুনতেই তো অপেক্ষায় ছিলাম 🥺']);
   else if(/জন্মদিন|birthday/.test(t))r='শুভ জন্মদিন, '+TO+'! 🎂';
   else if(/হাই|হ্যালো|হেই|hi|hello|সালাম/.test(t))r=pick(['হাই! 😊','আরে তুমি! কেমন লাগছে?']);
@@ -508,6 +533,7 @@ const VIEW_LINES=['এই ছবিটা দেখলেই আমার মন
 const IDLE_LINES=['বেঞ্চে বসো, বড় স্ক্রিনে একটা সারপ্রাইজ আছে 🎬','কেকটা কিন্তু তোমার জন্য, ফুঁ দিতে ভুলো না 🎂','সময় নিয়ে দেখো, প্রতিটা ফ্রেমে একটা গল্প আছে','ওই দিকের ছবিগুলোও দেখো'];
 function partnerUpdate(dt){
   const p=partner,pl=player;
+  if(SC.name){sceneUpdate(dt);return}
   if(pl.sitting&&P.mode!=='tosit'&&P.mode!=='sit'){P.mode='tosit';p.dancing=false;p.sitting=false}
   if(!pl.sitting&&(P.mode==='tosit'||P.mode==='sit')){P.mode='follow';p.sitting=false;p.pos.set(seat.q.x,0,-5.4)}
   if(P.waveBack>0){P.waveBack-=dt;if(P.waveBack<=0&&!p.sitting){p.waveT=1.8;say(p,'হাই! 👋',2200)}}
@@ -549,6 +575,120 @@ function partnerUpdate(dt){
   }
 }
 
+/* ---------- hearts ---------- */
+const heartTex=(()=>{const c=cv(64,64),g=c.getContext('2d');g.fillStyle='#e8344f';heartPath(g,32,28,18);g.fill();g.fillStyle='rgba(255,255,255,.4)';g.beginPath();g.ellipse(23,21,5,3,-.6,0,7);g.fill();return new THREE.CanvasTexture(c)})();
+const hearts=[];
+function heartAt(x,y,z,o){
+  o=o||{};
+  const m=new THREE.SpriteMaterial({map:heartTex,transparent:true,depthTest:false,opacity:0}),sp=new THREE.Sprite(m),sc=o.s||rnd(.22,.34);
+  sp.position.set(x,y,z);sp.scale.set(sc,sc,1);sp.renderOrder=20;scene.add(sp);
+  hearts.push({sp,m,sc,t:0,delay:o.delay||0,life:o.life||rnd(1.6,2.4),
+    vx:o.vx!==undefined?o.vx:rnd(-.25,.25),vy:o.vy!==undefined?o.vy:rnd(.6,1),vz:o.vz!==undefined?o.vz:rnd(-.25,.25)});
+}
+function heartsUpdate(dt){
+  for(let i=hearts.length-1;i>=0;i--){
+    const h=hearts[i];
+    if(h.delay>0){h.delay-=dt;continue}
+    h.t+=dt;const u=h.t/h.life;
+    h.sp.position.x+=h.vx*dt;h.sp.position.y+=h.vy*dt;h.sp.position.z+=h.vz*dt;
+    h.m.opacity=u<.15?u/.15:Math.max(0,1-(u-.15)/.85);
+    const q=h.sc*(1+Math.sin(h.t*9)*.08);h.sp.scale.set(q,q,1);
+    if(h.t>=h.life){scene.remove(h.sp);h.m.dispose();hearts.splice(i,1)}
+  }
+}
+
+/* ---------- scenes: চুমু & রাগ (কান ধরে ওঠবস) ---------- */
+const SC={name:null,st:0,t:0,n:0,prev:null,side:null,h0:0};
+const WORDS=['এক','দুই','তিন','চার','পাঁচ','ছয়'],REPS=WORDS.length;
+function setAngryBtn(){const b=$('#bAngry');b.classList.toggle('on',player.angry);b.querySelector('span').textContent=player.angry?'মাফ করো':'রাগ'}
+function endScene(){
+  SC.name=null;SC.st=0;SC.t=0;
+  for(const av of [player,partner]){av.kiss=false;av.headYaw=0;av.uthbos=false}
+  player.angry=false;setAngryBtn();
+  if(SC.prev){P.mode=SC.prev;SC.prev=null}else{P.mode='follow';P.idleT=0}
+}
+function startKiss(){
+  if(SC.name==='angry'){toast('রাগ করে আছি, এখন চুমু নয়! 😤',2200);return}
+  if(SC.name)return;
+  if(P.mode==='tosit'&&player.sitting){toast('একটু অপেক্ষা করো, ও আসছে…',1800);return}
+  if(player.dancing){player.dancing=false;setDanceBtn()}
+  player.goal=null;partner.dancing=false;P.forceDance=0;SC.t=0;SC.st=0;SC.prev=null;
+  if(player.sitting){SC.name='blow';SC.prev=P.mode;say(player,'উম্মাহ! 😘',2600);return}
+  SC.name='kiss';SC.h0=player.heading;SC.side={x:Math.cos(SC.h0),z:-Math.sin(SC.h0)};
+  say(partner,'আসছি আসছি… 😳',1800);
+}
+function startAngry(){
+  if(SC.name==='angry'){
+    if(SC.st<3){SC.st=3;SC.t=1.81;partner.uthbos=false;say(partner,'বাঁচালে! 😅',2200)}
+    return;
+  }
+  if(SC.name)return;
+  if(player.sitting){standUp();partner.sitting=false;partner.moving=false;partner.pos.set(seat.q.x,0,-5.4)}
+  player.dancing=false;setDanceBtn();player.goal=null;partner.dancing=false;P.forceDance=0;
+  SC.name='angry';SC.st=0;SC.t=0;SC.n=0;SC.prev=null;
+  player.angry=true;setAngryBtn();
+  say(player,'হুঁ! আমি রাগ করেছি 😠',3200);
+  setTimeout(()=>{if(SC.name==='angry'&&SC.st===0)say(partner,'আরে আরে, রাগ কোরো না প্লিজ 🥺',2600)},700);
+}
+function sceneUpdate(dt){
+  SC.t+=dt;const p=partner,pl=player;
+  if(SC.name==='kiss'){
+    if(SC.st===0){
+      const left=stepToward(p,pl.pos.x+SC.side.x*.62,pl.pos.z+SC.side.z*.62,3.4,dt);
+      if(left<.05||SC.t>4){p.moving=false;p.targetHeading=SC.h0;SC.st=1;SC.t=0}
+    }else if(SC.st===1){
+      pl.targetHeading=Math.atan2(SC.side.x,SC.side.z);p.headYaw=-.75;
+      if(SC.t>.6){SC.st=2;SC.t=0;pl.kiss=true}
+    }else if(SC.st===2){
+      if(SC.t>.8){
+        SC.st=3;SC.t=0;
+        const mx=(pl.pos.x+p.pos.x)/2,mz=(pl.pos.z+p.pos.z)/2;
+        for(let i=0;i<9;i++)heartAt(mx+rnd(-.2,.2),1.95+rnd(-.1,.15),mz+rnd(-.2,.2),{delay:i*.12});
+        p.blush=1;say(pl,'উম্মাহ! 😘',2400);
+        setTimeout(()=>{if(SC.name==='kiss')say(p,'উফ্‌… গাল লাল হয়ে গেল 🥰',3000)},700);
+      }
+    }else if(SC.t>2.6){pl.kiss=false;endScene()}
+  }else if(SC.name==='blow'){
+    pl.headYaw=-.7;p.headYaw=.7;
+    if(SC.st===0&&SC.t>.3){
+      SC.st=1;
+      for(let i=0;i<7;i++)heartAt(pl.pos.x+.15,1.5,pl.pos.z+.1,{vx:.9,vy:.3,vz:0,delay:i*.14,s:.26,life:1.4});
+    }
+    if(SC.st===1&&SC.t>1.1){SC.st=2;p.blush=1;say(p,'আমার লজ্জা লাগছে 🙈',2600)}
+    if(SC.t>3){endScene()}
+  }else if(SC.name==='angry'){
+    const fx=Math.sin(pl.heading),fz=Math.cos(pl.heading);
+    if(SC.st===0){
+      const left=stepToward(p,pl.pos.x+fx*1.5,pl.pos.z+fz*1.5,3.6,dt);
+      if(left<.05||SC.t>4){
+        p.moving=false;SC.st=1;SC.t=0;SC.n=0;p.uthbos=true;p.uPhase=0;
+        say(p,'এই যে, কান ধরলাম! আর কক্ষনো না 🥺',3000);
+      }
+    }else if(SC.st===1){
+      p.targetHeading=Math.atan2(pl.pos.x-p.pos.x,pl.pos.z-p.pos.z);
+      const bot=Math.floor((p.uPhase+Math.PI)/(2*Math.PI));
+      if(bot>SC.n&&SC.n<REPS){
+        SC.n=bot;say(p,WORDS[SC.n-1]+'… 🥺',1100);
+        if(SC.n===2)say(pl,'আরেকটু! 😤',1600);
+        if(SC.n===4)say(pl,'জোরে জোরে!',1600);
+      }
+      if(p.uPhase>=2*Math.PI*REPS){SC.st=2;SC.t=0;p.uthbos=false;p.blush=1;say(p,'উফ্‌ফ, পা ব্যথা! এবার মাফ করবে তো? 🙏',3200)}
+    }else if(SC.st===3||SC.st===2){
+      p.targetHeading=Math.atan2(pl.pos.x-p.pos.x,pl.pos.z-p.pos.z);
+      if(SC.t>1.8&&(SC.st===2||SC.st===3)){
+        SC.st=4;SC.t=0;pl.angry=false;setAngryBtn();
+        say(pl,'আচ্ছা আচ্ছা, মাফ করলাম 😊',3000);
+        for(let i=0;i<6;i++)heartAt(pl.pos.x+rnd(-.3,.3),1.95,pl.pos.z+rnd(-.3,.3),{delay:i*.1});
+      }
+    }else if(SC.st===4){
+      if(SC.t>.9&&!SC.said){SC.said=1;say(p,'ধন্যবাদ! ভালোবাসি ❤',2600)}
+      if(SC.t>2.6){SC.said=0;endScene()}
+    }
+  }
+}
+$('#bKiss').onclick=startKiss;
+$('#bAngry').onclick=startAngry;
+
 /* ---------- main loop ---------- */
 let started=false,nearFrame=-1;
 const clock=new THREE.Clock();
@@ -558,6 +698,7 @@ function update(dt,time){
   if(started){
     if(moving){
       player.goal=null;
+      if(SC.name==='kiss'||SC.name==='blow')endScene();
       if(player.sitting){standUp()}
       if(player.dancing){player.dancing=false;setDanceBtn()}
       const fx=-Math.sin(cam.yaw),fz=-Math.cos(cam.yaw),rx=Math.cos(cam.yaw),rz=-Math.sin(cam.yaw);
@@ -584,7 +725,7 @@ function update(dt,time){
     av.root.rotation.y=av.heading;
     animateAvatar(av,dt,time);
   }
-  separate(player,partner);
+  if(SC.name!=='kiss')separate(player,partner);
 
   /* proximity */
   near=null;
@@ -596,7 +737,7 @@ function update(dt,time){
   const vb=$('#viewBtn');
   if(near)vb.textContent=near.t==='cake'?'মোমবাতিতে ফুঁ দাও':'ছবিটা দেখো';
   vb.classList.toggle('on',!!near&&!$('#viewer').classList.contains('on')&&!chatEl.classList.contains('on'));
-  cakeUpdate(dt,time);
+  cakeUpdate(dt,time);heartsUpdate(dt);
 
   /* slideshow */
   updScreen(dt);
