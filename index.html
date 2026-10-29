@@ -63,25 +63,53 @@ body.live #acts{opacity:1;pointer-events:auto}
 #vcapt{color:var(--ink);font-family:'Noto Serif Bengali',serif;font-weight:600;font-size:21px;text-align:center;margin-top:12px}
 #vClose{background:var(--paper);color:var(--ink);border-radius:99px;padding:12px 30px;font-weight:600;font-size:16px}
 @media (max-height:760px){#acts{gap:6px}.act b{width:44px;height:44px}.act svg{width:21px;height:21px}.act span{font-size:11px}}
+#hud{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+#tools{display:flex;gap:8px;pointer-events:auto}
+#tools button{width:42px;height:42px;border-radius:50%;background:rgba(29,24,22,.5);border:1px solid var(--line);display:grid;place-items:center;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+#tools button.on{background:var(--red);border-color:var(--red)}
+#tools svg{width:20px;height:20px;fill:none;stroke:var(--paper);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.act{position:relative}
+.act:after{content:attr(data-k);position:absolute;top:-4px;right:-3px;width:18px;height:18px;border-radius:6px;background:var(--ink);color:var(--paper);font-size:11px;display:none;place-items:center}
+#acts{display:grid;grid-auto-flow:column;grid-template-rows:repeat(4,auto);gap:10px 12px}
+.act:focus-visible,#tools button:focus-visible,.open:focus-visible{outline:2px solid var(--paper);outline-offset:3px;border-radius:14px}
+#shotImg{display:none;max-width:100%;max-height:62vh;border-radius:2px}
+#flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:12}
+#flash.on{animation:fsh .55s ease-out}@keyframes fsh{from{opacity:.9}to{opacity:0}}
+#keys{display:none;position:fixed;left:20px;bottom:22px;max-width:230px;font-size:13px;line-height:1.8;opacity:.8;text-shadow:0 1px 8px rgba(0,0,0,.8);pointer-events:none}
+@media (max-width:700px){#viewBtn{left:16px;bottom:170px;transform:translateY(10px);max-width:52vw;font-size:15px;padding:11px 18px}#viewBtn.on{transform:none}}
+@media (hover:hover) and (min-width:900px){
+#joy{display:none}
+#acts{grid-auto-flow:row;grid-template-rows:none;grid-template-columns:repeat(7,auto);left:50%;right:auto;transform:translateX(-50%);bottom:22px;padding:14px 18px 10px;border-radius:28px;background:rgba(29,24,22,.55);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);gap:6px 16px}
+.act b{width:50px;height:50px}.act:after{display:grid}.act:hover b{transform:translateY(-3px)}
+body.live #keys{display:block}
+.ttl{font-size:26px}.sub{font-size:15px}
+#viewBtn{bottom:130px}
+#chat{left:50%;right:auto;width:min(560px,calc(100% - 32px));transform:translateX(-50%);bottom:120px}
+.gift{max-width:440px;padding:56px 38px 34px}.gift h1{font-size:50px}.gift p{font-size:18px}
+#vcan,#shotImg{max-height:72vh}#toast{top:100px}}
+@media (max-height:520px){.act span{display:none}.act b{width:40px;height:40px}#joy{width:100px;height:100px}#viewBtn{bottom:84px}#hud .sub{display:none}#toast{top:64px}.gift{padding:40px 22px 18px}.gift p{font-size:14.5px;line-height:1.5}}
+@media (max-width:380px){.act b{width:46px;height:46px}#joy{width:108px;height:108px}}
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
 <div id="fx"></div>
-<div id="hud"><div class="ttl">শুভ জন্মদিন, পৃথা</div><div class="sub">রেদোয়ানের পক্ষ থেকে</div></div>
+<div id="hud"><div><div class="ttl">শুভ জন্মদিন, পৃথা</div><div class="sub">রেদোয়ানের পক্ষ থেকে</div></div><div id="tools"><button id="tMood" aria-label="মুড"><svg viewBox="0 0 24 24"><path d="M20 14a8 8 0 1 1-10-10 6.5 6.5 0 0 0 10 10z"/></svg></button><button id="tSnd" aria-label="সাউন্ড"><svg viewBox="0 0 24 24"><path d="M4 10v4h4l5 4V6L8 10zM16.5 9a4 4 0 0 1 0 6"/></svg></button><button id="tFs" aria-label="ফুলস্ক্রিন"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button></div></div>
+<div id="keys">W A S D — হাঁটো<br>মাউস টেনে — চারদিক, স্ক্রল — জুম<br>E — ছবি/কেক · F — ফুলস্ক্রিন</div><div id="flash"></div>
 <div id="toast"></div>
 <button id="viewBtn">ছবিটা দেখো</button>
 <div id="joy"><div id="knob"></div></div>
 <div id="acts">
-<button class="act" id="bWave"><b><svg viewBox="0 0 24 24"><path d="M8 12V6.5a1.5 1.5 0 0 1 3 0V11m0-1V5a1.5 1.5 0 0 1 3 0v6m0-3a1.5 1.5 0 0 1 3 0v5.5c0 4-2.5 7-6 7-3 0-4.5-1.5-6-4l-2-3.5a1.5 1.5 0 0 1 2.4-1.7L8 14"/></svg></b><span>হাত নাড়ো</span></button>
-<button class="act" id="bDance"><b><svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg></b><span>নাচো</span></button>
-<button class="act" id="bSit"><b><svg viewBox="0 0 24 24"><path d="M4 10h16M5 10v5M19 10v5M4 15h16M7 15v4M17 15v4"/></svg></b><span>বসো</span></button>
-<button class="act" id="bKiss"><b><svg viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></b><span>চুমু</span></button>
-<button class="act" id="bAngry"><b><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 9.5l2.5 1.2M16 9.5l-2.5 1.2M8.5 16c1-1.2 2.2-1.8 3.5-1.8s2.5.6 3.5 1.8"/></svg></b><span>রাগ</span></button>
-<button class="act" id="bChat"><b><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg></b><span>চ্যাট</span></button>
+<button class="act" id="bWave" data-k="1"><b><svg viewBox="0 0 24 24"><path d="M8 12V6.5a1.5 1.5 0 0 1 3 0V11m0-1V5a1.5 1.5 0 0 1 3 0v6m0-3a1.5 1.5 0 0 1 3 0v5.5c0 4-2.5 7-6 7-3 0-4.5-1.5-6-4l-2-3.5a1.5 1.5 0 0 1 2.4-1.7L8 14"/></svg></b><span>হাত নাড়ো</span></button>
+<button class="act" id="bDance" data-k="2"><b><svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg></b><span>নাচো</span></button>
+<button class="act" id="bSit" data-k="3"><b><svg viewBox="0 0 24 24"><path d="M4 10h16M5 10v5M19 10v5M4 15h16M7 15v4M17 15v4"/></svg></b><span>বসো</span></button>
+<button class="act" id="bKiss" data-k="4"><b><svg viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></b><span>চুমু</span></button>
+<button class="act" id="bAngry" data-k="5"><b><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 9.5l2.5 1.2M16 9.5l-2.5 1.2M8.5 16c1-1.2 2.2-1.8 3.5-1.8s2.5.6 3.5 1.8"/></svg></b><span>রাগ</span></button>
+<button class="act" id="bSnap" data-k="6"><b><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4zM12 17a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/></svg></b><span>ছবি তোলো</span></button>
+<button class="act" data-k="7" id="bChat"><b><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg></b><span>চ্যাট</span></button>
 </div>
 <div id="chat"><input id="chatIn" maxlength="80" placeholder="কিছু লিখো…" autocomplete="off"><button id="chatSend">পাঠাও</button></div>
-<div id="viewer"><div class="pol"><canvas id="vcan"></canvas><div id="vcapt"></div></div><button id="vClose">বন্ধ করো</button></div>
+<div id="viewer"><div class="pol"><canvas id="vcan"></canvas><img id="shotImg" alt=""><div id="vcapt"></div></div><button id="vClose">বন্ধ করো</button></div>
 <div id="intro"><div class="gift">
 <svg class="str" viewBox="0 0 60 90"><path d="M30 90C30 50 8 40 8 0" stroke="#b3122f" stroke-width="3.5" fill="none" stroke-linecap="round"/></svg>
 <h1>শুভ জন্মদিন, পৃথা</h1>
@@ -242,7 +270,7 @@ try{const bin=atob(VID64),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;
 vid.addEventListener('error',()=>{if(!vid.dataset.fb){vid.dataset.fb=1;useData()}});
 const bgC=cv(48,27),bg=bgC.getContext('2d');
 function playVideo(){
-  videoOn=true;vid.muted=false;const p=vid.play();
+  videoOn=true;vid.muted=muted;const p=vid.play();
   if(p&&p.catch)p.catch(()=>{vid.muted=true;vid.play().then(()=>toast('সাউন্ডের জন্য স্ক্রিনে ট্যাপ করো')).catch(()=>{videoOn=false})});
 }
 function pauseVideo(){videoOn=false;vid.pause();paintScreen()}
@@ -437,6 +465,7 @@ addEventListener('keydown',e=>{
   if(e.target.tagName==='INPUT'){if(e.key==='Escape'){closeViewer();closeChat()}return}
   keys.add(e.key.toLowerCase());
   if(e.key==='Escape')closeViewer();
+  hot(e);
 });
 addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));
 function inputVec(){
@@ -522,7 +551,7 @@ let viewIdx=-1,near=null;
 const vcan=$('#vcan');
 function drawViewer(){const f=frames[viewIdx];vcan.width=f.canvas.width;vcan.height=f.canvas.height;vcan.getContext('2d').drawImage(f.canvas,0,0);$('#vcapt').textContent=f.caption}
 function openViewer(i){viewIdx=i;drawViewer();$('#viewer').classList.add('on');joy.x=joy.y=0}
-function closeViewer(){$('#viewer').classList.remove('on');viewIdx=-1}
+function closeViewer(){$('#viewer').classList.remove('on');viewIdx=-1;$('#shotImg').style.display='none';$('#vcan').style.display='block'}
 $('#vClose').onclick=closeViewer;
 $('#viewer').addEventListener('click',e=>{if(e.target.id==='viewer')closeViewer()});
 $('#viewBtn').onclick=()=>{if(!near)return;if(near.t==='cake')blow();else openViewer(near.i)};
@@ -755,13 +784,14 @@ function update(dt,time){
     camera.position.set(Math.sin(a)*7,2.6,3+Math.cos(a)*5);
     camera.lookAt(0,1.7,-4);
   }
-  updTag(player);updTag(partner);
+  updTag(player);updTag(partner);bal(time);
 }
 function loop(){
   requestAnimationFrame(loop);
   const dt=Math.min(clock.getDelta(),.05);
   update(dt,clock.elapsedTime);
   renderer.render(scene,camera);
+  if(snapReq){snapReq=false;shot()}
 }
 
 /* ---------- cake & confetti ---------- */
@@ -807,13 +837,80 @@ function spawn(x,y,z,vx,vy,vz){
 function burst(x,y,z,n){for(let i=0;i<n;i++)spawn(x,y,z,rnd(-3,3),rnd(3,7),rnd(-3,3))}
 function rain(n){for(let i=0;i<n;i++)spawn(rnd(-6,6),rnd(3.8,4.6),rnd(-8,8),rnd(-.6,.6),-rnd(.5,2),rnd(-.6,.6))}
 function blow(){
-  if(!lit)return;lit=false;
+  if(!lit)return;lit=false;sing();
   burst(CK.x,1.5,CK.z,150);rain(90);
   say(partner,'শুভ জন্মদিন, '+TO+'! 🎉',4500);
   setTimeout(()=>say(player,'ইচ্ছেটা করে ফেললাম 🤫',3500),900);
   setTimeout(()=>say(partner,'কী চাইলে, সেটা বোলো না 😉',3500),4800);
   setTimeout(()=>{lit=true},12000);
 }
+
+/* ---------- extras: balloons, bunting, melody, photo, tools ---------- */
+const bals=[];
+[[-8.4,9.5],[8.4,9.5],[-8.4,-9.5],[8.4,-9.5],[-3.4,-8.6],[3.4,-8.6]].forEach(([x,z])=>{
+  for(let k=0;k<3;k++){
+    const y=rnd(2.4,3.6),ox=rnd(-.35,.35),oz=rnd(-.35,.35);
+    const m=new THREE.Mesh(new THREE.SphereGeometry(.3,14,12),L(pick([0xb3122f,0x1f5d46,0xf6f1e8,0xe9b8c4,0xd9b36a])));
+    m.scale.y=1.25;m.position.set(x+ox,y,z+oz);scene.add(m);
+    const st=new THREE.Mesh(new THREE.CylinderGeometry(.006,.006,y-.3,4),B(0x8a7f74));st.position.set(x+ox*.5,(y-.3)/2,z+oz*.5);scene.add(st);
+    bals.push({m,y,p:rnd(0,6)});
+  }
+});
+function bal(t){bals.forEach(b=>{b.m.position.y=b.y+Math.sin(t*1.1+b.p)*.07})}
+{
+  const fm=[0xb3122f,0x1f5d46,0xf6f1e8,0xd9b36a].map(c=>new THREE.MeshBasicMaterial({color:c,side:THREE.DoubleSide})),fg=new THREE.CircleGeometry(.2,3);
+  for(const z of [-3.6,7.6]){
+    const pts=[];
+    for(let i=0;i<=20;i++){
+      const x=-9.8+i/20*19.6,y=4.5-Math.sin(i/20*Math.PI)*.5;pts.push(new V3(x,y,z));
+      if(i<20){const f=new THREE.Mesh(fg,fm[i%4]);f.position.set(x+.49,y-.2,z);f.rotation.z=-Math.PI/2;scene.add(f)}
+    }
+    scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:0x6b5a4a})));
+  }
+}
+let muted=false,dim=false,AC=null,master=null,snapReq=false;
+function sing(){
+  if(muted)return;
+  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(!master){master=AC.createGain();master.connect(AC.destination)}AC.resume()}catch(e){return}
+  const N={C:261.63,D:293.66,E:329.63,F:349.23,G:392,A:440,B:466.16,H:523.25};
+  let t=AC.currentTime+.05;
+  'C.75 C.25 D1 C1 F1 E2 C.75 C.25 D1 C1 G1 F2 C.75 C.25 H1 A1 F1 E1 D2 B.75 B.25 A1 F1 G1 F2'.split(' ').forEach(x=>{
+    const d=parseFloat(x.slice(1))*.42,o=AC.createOscillator(),g=AC.createGain();
+    o.type='triangle';o.frequency.value=N[x[0]];
+    g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.25,t+.03);g.gain.exponentialRampToValueAtTime(.0001,t+d*.95);
+    o.connect(g);g.connect(master);o.start(t);o.stop(t+d);t+=d;
+  });
+  say(partner,'🎶 হ্যাপি বার্থডে টু ইউ…',5000);
+}
+function shot(){
+  const w=canvas.width,h=canvas.height,c=cv(w,h),g=c.getContext('2d');
+  g.drawImage(canvas,0,0);
+  const bh=Math.round(h*.09),gr=g.createLinearGradient(0,h-bh*1.6,0,h);
+  gr.addColorStop(0,'rgba(20,17,15,0)');gr.addColorStop(1,'rgba(20,17,15,.72)');
+  g.fillStyle=gr;g.fillRect(0,h-bh*1.6,w,bh*1.6);
+  g.fillStyle='#f6f1e8';g.textAlign='center';g.textBaseline='middle';g.font=`800 ${Math.round(bh*.5)}px ${SERIF}`;
+  g.fillText('শুভ জন্মদিন, '+TO+' ❤ '+FROM,w/2,h-bh*.55);
+  const im=$('#shotImg');im.src=c.toDataURL('image/jpeg',.92);im.style.display='block';$('#vcan').style.display='none';
+  $('#vcapt').textContent='ছবিটা চেপে ধরে (বা ডান-ক্লিক করে) সেভ করো';
+  $('#viewer').classList.add('on');joy.x=joy.y=0;
+  const f=$('#flash');f.classList.remove('on');void f.offsetWidth;f.classList.add('on');
+}
+$('#bSnap').onclick=()=>{if(started&&!$('#viewer').classList.contains('on')){snapReq=true;say(partner,'হাসো! 📸',1500)}};
+const lights=scene.children.filter(o=>o.isLight&&!o.isPointLight).map(o=>[o,o.intensity]);
+$('#tMood').onclick=()=>{dim=!dim;$('#tMood').classList.toggle('on',dim);lights.forEach(([o,v])=>o.intensity=dim?v*.38:v);scene.background.set(dim?0x2a2420:0xd9d4cb);toast(dim?'রোমান্টিক মুড চালু 🕯️':'আলো স্বাভাবিক',1800)};
+$('#tSnd').onclick=()=>{muted=!muted;$('#tSnd').classList.toggle('on',muted);vid.muted=muted;if(master)master.gain.value=muted?0:1;toast(muted?'সাউন্ড বন্ধ':'সাউন্ড চালু',1500)};
+$('#tFs').onclick=()=>{
+  try{const p=document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(()=>toast('এখানে ফুলস্ক্রিন চলছে না'))}catch(e){toast('এখানে ফুলস্ক্রিন চলছে না')}
+};
+function hot(e){
+  if(!started||e.ctrlKey||e.metaKey||e.altKey)return;
+  const id={'1':'bWave','2':'bDance','3':'bSit','4':'bKiss','5':'bAngry','6':'bSnap','7':'bChat'}[e.key];
+  if(id){e.preventDefault();$('#'+id).click();return}
+  const k=e.key.toLowerCase();
+  if(k==='e'&&$('#viewBtn').classList.contains('on'))$('#viewBtn').click();
+  if(k==='f')$('#tFs').click();
+}
+canvas.addEventListener('wheel',e=>{e.preventDefault();cam.dist=clamp(cam.dist+e.deltaY*.004,3.5,9)},{passive:false});
 
 /* ---------- start ---------- */
 $('#start').onclick=()=>{
@@ -823,7 +920,7 @@ $('#start').onclick=()=>{
   vid.muted=true;const up=vid.play();if(up&&up.then)up.then(()=>{if(!videoOn){vid.pause();vid.currentTime=0}}).catch(()=>{});
   rain(200);
   setTimeout(()=>say(partner,'শুভ জন্মদিন, '+TO+'! 🎂',4500),1200);
-  setTimeout(()=>toast('জয়স্টিক দিয়ে হাঁটো, স্ক্রিনে টেনে চারদিক দেখো'),2400);
+  setTimeout(()=>toast(matchMedia('(hover:hover) and (min-width:900px)').matches?'W A S D দিয়ে হাঁটো, মাউস টেনে চারদিক দেখো':'জয়স্টিক দিয়ে হাঁটো, স্ক্রিনে টেনে চারদিক দেখো'),2400);
   setTimeout(()=>say(partner,'তোমার জন্য একটা ছোট্ট জাদুঘর বানিয়েছি',4500),6200);
   setTimeout(()=>say(partner,'আগে কেকের কাছে যাও, মোমবাতি জ্বালানো আছে 🕯️',5000),12000);
 };
